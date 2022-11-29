@@ -1,12 +1,12 @@
 categories:
-  - name: Email Addresses
+  email_addresses:
     icon: "📧"
     snippets:
       - john: john.doe@gmail.com
       - jane: jane.doe@gmail.com
       - robert: rob.lastname@yahoo.com
       - dvorak: d.aoeuhts@long.email.domain.com
-  - name: Phone Numbers
+  phone_numbers:
     icon: "☎️"
     snippets:
       - john: (111) 111-1111

@@ -6,14 +6,13 @@ use std::{collections::HashMap, path::Path};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Category {
-    pub name: String,
     pub icon: String, // TODO: make this an option
     pub snippets: Vec<HashMap<String, String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct SnippetConfig {
-    pub categories: Vec<Category>,
+    pub categories: HashMap<String, Category>,
 }
 
 impl SnippetConfig {
@@ -39,33 +38,29 @@ fn snip_lookup_rust() -> oxi::Result<String> {
     let sc = SnippetConfig::load(sc_path).unwrap();
     result = format!("sc = {:#?}", &sc);
 
-    print!("sc = {:#?}", &sc);
-
     // ---------------------------------------------
     let mut category_names = Vec::new();
-    for category in &sc.categories {
-        category_names.push(category.name.clone());
-        // catogories.push(category)
+    for category_name in sc.categories.keys() {
+        category_names.push(category_name);
     }
     print!("category_names = {:#?}", &category_names);
     // ---------------------------------------------
 
-    let chosen_category = "Phone Numbers";
+    // ---------------------------------------------
+    let chosen_category = "phone_numbers";
     let mut snippet_names = Vec::new();
     let mut snippet_values = Vec::new();
-    // TODO: this definitely needs to be a hashmap... not a vector
-    for category in &sc.categories {
-        if category.name == chosen_category {
-            for snippet in &category.snippets {
-                for (snippet_name, snippet_value) in snippet.iter() {
-                    snippet_names.push(snippet_name);
-                    snippet_values.push(snippet_value);
-                }
+    if let Some(category) = sc.categories.get(chosen_category) {
+        for snippet in &category.snippets {
+            for (snippet_name, snippet_value) in snippet.iter() {
+                snippet_names.push(snippet_name);
+                snippet_values.push(snippet_value);
             }
         }
     }
     print!("snippet_names = {:#?}", &snippet_names);
     print!("snippet_values = {:#?}", &snippet_values);
+    // ---------------------------------------------
 
     Ok(format!("sc = {:#?}", sc))
     // Ok(42)
