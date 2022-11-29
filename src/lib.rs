@@ -83,11 +83,6 @@ fn snip_lookup_rust() -> oxi::Result<Dictionary> {
 
         let sc = SnippetConfig::load(path).unwrap();
         for (category_name, category_contents) in sc.categories.into_iter() {
-            print!(
-                "inserting {},{} into the category_names!",
-                category_name.to_string(),
-                category_contents.icon.to_string()
-            );
             category_names.insert(
                 category_name.to_string(),
                 category_contents.icon.to_string(),
@@ -106,8 +101,6 @@ fn snip_lookup_rust() -> oxi::Result<Dictionary> {
         let args: Vec<&str> = path_and_category.split(",").collect();
         let path = args[0].to_string();
         let category = args[1].to_string();
-        print!("path = {}", path);
-        print!("category = {}", category);
 
         let mut snippets: HashMap<String, String> = HashMap::new();
 

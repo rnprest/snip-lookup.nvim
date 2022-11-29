@@ -7,8 +7,49 @@ local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 -- rust
 local rust = require 'snip_lookup_rust'
+-- snip-lookup stuff
+local config = require 'snip-lookup.config'
 
-local snippets = function(opts, prompt)
+local M = {}
+
+--- Loads the user's specified configuration and creates their desired keymapping
+---@param opts table User-provided options, to override the default options with
+M.setup = function(opts)
+    -- TODO: need to error if user tries to pass an option that doesn't exist
+    if opts ~= nil then
+        config.opts = opts
+    end
+
+    vim.api.nvim_set_keymap(
+        'n',
+        config.opts['open_picker'],
+        [[:lua require'snip-lookup'.search()<CR>]],
+        { noremap = true }
+    )
+
+    -- TODO: fix this
+
+    local command = 'e ' .. config.opts['config_path']
+    vim.api.nvim_create_user_command('SnipLookupEdit', command, {})
+    vim.api.nvim_set_keymap('n', config.opts['open_config'], ':SnipLookupEdit<CR>', { noremap = true })
+end
+
+M.search = function()
+    M._categories(require('telescope.themes').get_dropdown {})
+end
+
+-- M._get_config_path = function()
+--     return config.opts['config_path']
+-- end
+
+-- --- These will be applied unless overridden in the setup method
+-- M.default_opts = {
+--     open_picker = '<leader>sl',
+--     open_config = '<leader>esl',
+--     config_path = '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml',
+-- }
+
+M._snippets = function(opts, prompt)
     local snippets_results = {}
 
     ----------------------------------------------------------------------
@@ -59,7 +100,7 @@ local snippets = function(opts, prompt)
     }):find()
 end
 
-local categories = function(opts)
+M._categories = function(opts)
     local category_results = {}
 
     ----------------------------------------------------------------------
@@ -102,12 +143,11 @@ local categories = function(opts)
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
                 prompt = selection.value[1]
-                snippets(require('telescope.themes').get_dropdown {}, prompt)
+                M._snippets(require('telescope.themes').get_dropdown {}, prompt)
             end)
             return true
         end,
     }):find()
 end
 
--- TODO: map this to <leader>sl
-categories(require('telescope.themes').get_dropdown {})
+return M
