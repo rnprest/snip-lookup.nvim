@@ -7,8 +7,6 @@ local finders = require 'telescope.finders'
 local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
--- Plenary -- this is ONLY used to write to the file - try and replace with uv built-in functionality
-local Path = require 'plenary.path'
 -- Rust
 local rust = require 'snip_lookup_rust'
 -- snip-lookup stuff
@@ -35,24 +33,10 @@ categories:
     vim.fn.mkdir(vim.fn.fnamemodify(config.opts['config_file'], ':p:h'), 'p')
     -- Create initial config file, that can be tweaked by user
 
-    -- uv.fs_open(path, 'r', 438, function(err, fd)
-    --     print('fd = ' .. fd)
-    --     -- uv.fs_write({fd}, {data} [, {offset} [, {callback}]])            *uv.fs_write()*
-
-    --     --                 Parameters:
-    --     --                 - `fd`: `integer`
-    --     --                 - `data`: `buffer`
-    --     --                 - `offset`: `integer` or `nil`
-    --     --                 - `callback`: `callable` (async version) or `nil` (sync
-    --     uv.fs_write(fd, contents, 0)
-    --     -- uv.fs_read(fd, stat.size, 0, function(err, data)
-    --     --     uv.fs_close(fd, function(err)
-    --     --         callback(data)
-    --     --     end)
-    --     -- end)
-    -- end)
-
-    Path:new(config.opts['config_file']):write(contents, 'w')
+    uv.fs_open(path, 'w', 438, function(err, fd)
+        uv.fs_write(fd, contents, 0)
+        uv.fs_close(fd)
+    end)
 end
 
 --- Loads the user's specified configuration and creates their desired keymapping
