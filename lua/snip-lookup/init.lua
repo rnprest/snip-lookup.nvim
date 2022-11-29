@@ -50,7 +50,6 @@ local snippets = function(opts, prompt)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                print(vim.inspect(selection))
                 local snippet = selection.value[2]
                 vim.fn.setreg(vim.v.register, snippet) -- copy to clipboard (system if vim.opt.clipboard is set as such)
                 vim.notify(snippet .. ' has been copied!')
@@ -61,15 +60,34 @@ local snippets = function(opts, prompt)
 end
 
 local categories = function(opts)
+    local category_results = {}
+
+    ----------------------------------------------------------------------
+    --           Load <category's> snippets from config file            --
+    ----------------------------------------------------------------------
+    -- TODO: grab this path from the setup function
+    local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
+    names = names.contents -- TODO: there's so much wrong with this line
+
+    ----------------------------------------------------------------------
+    --            Create telescope results table from loaded            --
+    --                             snippets                             --
+    ----------------------------------------------------------------------
+    local index = 1
+    for category, icon in pairs(names) do
+        category_results[index] = { category, icon }
+        index = index + 1
+    end
+
+    ----------------------------------------------------------------------
+    --                     Create telescope picker                      --
+    ----------------------------------------------------------------------
     opts = opts or {}
     local prompt = 'Snippet Categories'
     pickers.new(opts, {
         prompt_title = prompt,
         finder = finders.new_table {
-            results = {
-                { 'email_addresses', '📧' },
-                { 'phone_numbers', '☎️ ' },
-            },
+            results = category_results,
             entry_maker = function(entry)
                 return {
                     value = entry,
@@ -91,36 +109,5 @@ local categories = function(opts)
     }):find()
 end
 
-----------------------------------------------------------------------
---                    Get those categories baby                     --
-----------------------------------------------------------------------
--- -- P(rust.get_categories())
--- -- P(rust.get_categories())
--- local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
--- names = names.names -- TODO: there's so much wrong with this line
--- P(names)
--- for _, k in pairs(names) do
---     vim.notify(k)
--- end
-
-----------------------------------------------------------------------
---                     Get those SNIPPETS HOMIE                     --
-----------------------------------------------------------------------
--- P(rust.get_categories())
--- P(rust.get_categories())
-local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
-names = names.contents -- TODO: there's so much wrong with this line
-P(names)
-for category, icon in pairs(names) do
-    vim.notify(category .. '   ' .. icon)
-end
-
-local path_and_categories = '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
-    .. ','
-    .. 'email_addresses'
-local snips = rust.get_snippets(path_and_categories)
-P(snips)
-
--- print(rust.something_else())
-
+-- TODO: map this to <leader>sl
 categories(require('telescope.themes').get_dropdown {})
