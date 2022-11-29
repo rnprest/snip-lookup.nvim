@@ -7,7 +7,11 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path};
 
 // I can map structs into lua objects perfectly fine, but hashmaps? Absolutely not.
-// Thus, this wrapper struct (and the below one) was born
+// Thus, this wrapper struct was born.
+// NOTE: I tried to have 2 separate structs (with one being a HashMap of <i32, String>), and the
+// Dictionary::from_iter at the bottom kept complaining about expecting whatever struct was passed
+// in first... Using the same wrapper struct for both hashmaps was the only way I could get around
+// this error
 
 #[derive(Debug, Serialize, Deserialize)]
 struct NeovimWrapper {
@@ -54,7 +58,7 @@ impl lua::Pushable for NeovimWrapper {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Category {
-    pub icon: String, // TODO: make this an option
+    pub icon: String, // TODO: make this an option or default it
     pub snippets: Vec<HashMap<String, String>>,
 }
 
@@ -96,14 +100,9 @@ fn snip_lookup_rust() -> oxi::Result<Dictionary> {
         Ok(nvim_categories)
     });
 
-    // let get_snippets = Function::from_fn::<_, oxi::Error>(move |(path, category)| {
-    // let get_snippets = Function::from_fn::<_, oxi::Error>(move |path: String, category: String| {
     // TODO: figure out a way to pass 2 closures to this function..
+    // Currently, I'm having to combine both arguments into a comma-separated string
     let get_snippets = Function::from_fn::<_, oxi::Error>(move |path_and_category: String| {
-        //------------------------------------------------------------------//
-        //         Maybe I can just pass 1 string but separate them         //
-        //                         with a comma????                         //
-        //------------------------------------------------------------------//
         let args: Vec<&str> = path_and_category.split(",").collect();
         let path = args[0].to_string();
         let category = args[1].to_string();
@@ -129,5 +128,4 @@ fn snip_lookup_rust() -> oxi::Result<Dictionary> {
         ("get_categories", get_categories),
         ("get_snippets", get_snippets),
     ]))
-    // Ok(42)
 }
