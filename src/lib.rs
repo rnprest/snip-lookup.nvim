@@ -2,7 +2,7 @@
 use nvim_oxi as oxi;
 use oxi::conversion::{self, FromObject, ToObject};
 use oxi::serde::{Deserializer, Serializer};
-use oxi::{lua, print, Dictionary, Function, Object};
+use oxi::{lua, Dictionary, Function, Object};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path};
 
