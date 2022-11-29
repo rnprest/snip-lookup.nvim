@@ -4,12 +4,8 @@ categories:
     snippets:
       - john: john.doe@gmail.com
       - jane: jane.doe@gmail.com
-      - robert: rob.lastname@yahoo.com
-      - dvorak: dvorak@long.email.domain.com
   phone_numbers:
     icon: "☎️"
     snippets:
-      - john: (111) 111-1111
-      - jane: (222) 222-2222
-      - robert: (333) 333-3333
-      - dvorak: (444) 444-4444
+      - jack: (111) 111-1111
+      - jill: (222) 222-2222
