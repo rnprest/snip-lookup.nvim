@@ -22,7 +22,7 @@ Your snippets file should follow the below structure:
 
 ```
 categories:
-  <snippet_category>:
+  <snippet category>:
     icon: <emoji/symbol>
     snippets:
       - <snippet name>: <snippet contents>
@@ -34,18 +34,14 @@ Example:
 
 ```yaml
 categories:
-  email_addresses:
+  Email Addresses:
     icon: "📧"
     snippets:
-      - john: john.doe@gmail.com
-      - jane: jane.doe@gmail.com
-      - robert: rob.lastname@yahoo.com
-      - dvorak: d.aoeuhts@long.email.domain.com
-  phone_numbers:
-    icon: "☎️"
+      - John Doe: john.doe@gmail.com
+      - Jane Doe: jane.doe@gmail.com
+  Phone Numbers:
+    icon: "☎️ "
     snippets:
-      - john: (111) 111-1111
-      - jane: (222) 222-2222
-      - robert: (333) 333-3333
-      - dvorak: (444) 444-4444
+      - Jack Black: (111) 111-1111
+      - Jill Dill: (222) 222-2222
 ```

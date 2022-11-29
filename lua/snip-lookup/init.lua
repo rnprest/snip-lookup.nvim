@@ -17,16 +17,16 @@ local M = {}
 M.create_config_file = function(path)
     local contents = [[
 categories:
-  email_addresses:
+  Email Addresses:
     icon: "📧"
     snippets:
-      - john: john.doe@gmail.com
-      - jane: jane.doe@gmail.com
-  phone_numbers:
+      - John Doe: john.doe@gmail.com
+      - Jane Doe: jane.doe@gmail.com
+  Phone Numbers:
     icon: "☎️"
     snippets:
-      - jack: (111) 111-1111
-      - jill: (222) 222-2222
+      - Jack Black: (111) 111-1111
+      - Jill Dill: (222) 222-2222
         ]]
 
     -- Create config directory if it doesn't exist already
