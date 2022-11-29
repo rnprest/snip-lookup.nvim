@@ -30,10 +30,11 @@ categories:
         ]]
 
     -- Create config directory if it doesn't exist already
-    vim.fn.mkdir(vim.fn.fnamemodify(config.opts['config_file'], ':p:h'), 'p')
+    local cleaned_path = vim.fn.fnamemodify(path, ':p')
+    local cleaned_path_parent_dir = vim.fn.fnamemodify(path, ':p:h')
+    vim.fn.mkdir(cleaned_path_parent_dir, 'p')
     -- Create initial config file, that can be tweaked by user
-
-    uv.fs_open(path, 'w', 438, function(err, fd)
+    uv.fs_open(cleaned_path, 'w', 438, function(err, fd)
         uv.fs_write(fd, contents, 0)
         uv.fs_close(fd)
     end)
@@ -44,7 +45,7 @@ end
 M.setup = function(opts)
     -- TODO: need to error if user tries to pass an option that doesn't exist
     if opts ~= nil then
-        config.opts = opts
+        config.opts = vim.tbl_deep_extend('keep', opts, config.default_opts)
     end
 
     vim.api.nvim_set_keymap(
@@ -57,7 +58,8 @@ M.setup = function(opts)
     ----------------------------------------------------------------------
     --        On first load, need to create initial config file         --
     ----------------------------------------------------------------------
-    if vim.fn.filereadable(config.opts['config_file']) == 0 then
+    local cleaned_path = vim.fn.fnamemodify(config.opts['config_file'], ':p')
+    if vim.fn.filereadable(cleaned_path) == 0 then
         print 'snip-lookup: Config directory not found - Creating'
         -- Create initial config file
         M.create_config_file(config.opts['config_file'])
@@ -79,8 +81,8 @@ M._snippets = function(opts, prompt)
     ----------------------------------------------------------------------
     --           Load <category's> snippets from config file            --
     ----------------------------------------------------------------------
-    -- TODO: grab this path from the setup function
-    local path_and_categories = config.opts['config_file'] .. ',' .. prompt
+    local cleaned_path = vim.fn.fnamemodify(config.opts['config_file'], ':p')
+    local path_and_categories = cleaned_path .. ',' .. prompt
     local snips = rust.get_snippets(path_and_categories)
     snips = snips.contents
 
@@ -130,8 +132,8 @@ M._categories = function(opts)
     ----------------------------------------------------------------------
     --           Load <category's> snippets from config file            --
     ----------------------------------------------------------------------
-    -- TODO: grab this path from the setup function
-    local names = rust.get_categories(config.opts['config_file'])
+    local cleaned_path = vim.fn.fnamemodify(config.opts['config_file'], ':p')
+    local names = rust.get_categories(cleaned_path)
     names = names.contents
 
     ----------------------------------------------------------------------
