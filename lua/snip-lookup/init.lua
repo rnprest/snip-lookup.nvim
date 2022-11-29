@@ -8,7 +8,7 @@ local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 -- Plenary -- this is ONLY used to write to the file - try and replace with uv built-in functionality
-local path = require 'plenary.path'
+local Path = require 'plenary.path'
 -- Rust
 local rust = require 'snip_lookup_rust'
 -- snip-lookup stuff
@@ -16,25 +16,44 @@ local config = require 'snip-lookup.config'
 
 local M = {}
 
-----------------------------------------------------------------------
---        Used to check if the config dir exists, so we can         --
---                     create it if it doesn't                      --
-----------------------------------------------------------------------
-M.fstat = function(path)
-    local fd = uv.fs_open(path, 'r', 438)
-    local stat = uv.fs_fstat(fd)
-    uv.fs_close(fd)
-    return stat
-end
+M.create_config_file = function(path)
+    local contents = [[
+categories:
+  email_addresses:
+    icon: "📧"
+    snippets:
+      - john: john.doe@gmail.com
+      - jane: jane.doe@gmail.com
+  phone_numbers:
+    icon: "☎️"
+    snippets:
+      - jack: (111) 111-1111
+      - jill: (222) 222-2222
+        ]]
 
-M.dir_exists = function(path)
-    local ok, stat = pcall(M.fstat, path)
-    if not ok then
-        return false
-    end
-    return stat.type == 'directory'
+    -- Create config directory if it doesn't exist already
+    vim.fn.mkdir(vim.fn.fnamemodify(config.opts['config_file'], ':p:h'), 'p')
+    -- Create initial config file, that can be tweaked by user
+
+    -- uv.fs_open(path, 'r', 438, function(err, fd)
+    --     print('fd = ' .. fd)
+    --     -- uv.fs_write({fd}, {data} [, {offset} [, {callback}]])            *uv.fs_write()*
+
+    --     --                 Parameters:
+    --     --                 - `fd`: `integer`
+    --     --                 - `data`: `buffer`
+    --     --                 - `offset`: `integer` or `nil`
+    --     --                 - `callback`: `callable` (async version) or `nil` (sync
+    --     uv.fs_write(fd, contents, 0)
+    --     -- uv.fs_read(fd, stat.size, 0, function(err, data)
+    --     --     uv.fs_close(fd, function(err)
+    --     --         callback(data)
+    --     --     end)
+    --     -- end)
+    -- end)
+
+    Path:new(config.opts['config_file']):write(contents, 'w')
 end
-----------------------------------------------------------------------
 
 --- Loads the user's specified configuration and creates their desired keymapping
 ---@param opts table User-provided options, to override the default options with
@@ -51,39 +70,17 @@ M.setup = function(opts)
         { noremap = true }
     )
 
-    local config_dir = config.opts['config_dir']
-    local config_file = config.opts['config_file']
-    config.config_file_abs = config_dir .. '/' .. config_file
-
     ----------------------------------------------------------------------
     --        On first load, need to create initial config file         --
     ----------------------------------------------------------------------
-    if M.dir_exists(config_dir) == false then
+    if vim.fn.filereadable(config.opts['config_file']) == 0 then
         print 'snip-lookup: Config directory not found - Creating'
-
-        local default_contents = [[
-categories:
-  email_addresses:
-    icon: "📧"
-    snippets:
-      - john: john.doe@gmail.com
-      - jane: jane.doe@gmail.com
-  phone_numbers:
-    icon: "☎️"
-    snippets:
-      - jack: (111) 111-1111
-      - jill: (222) 222-2222
-        ]]
-
-        -- Create config directory if it doesn't exist already
-        local command = 'call mkdir("' .. config_dir .. '")'
-        vim.cmd(command)
-        -- Create initial config file, that can be tweaked by user
-        path:new(config.config_file_abs):write(default_contents, 'w')
+        -- Create initial config file
+        M.create_config_file(config.opts['config_file'])
     end
 
     -- Create Commands / Keymaps
-    local command = 'e ' .. config.config_file_abs
+    local command = 'e ' .. config.opts['config_file']
     vim.api.nvim_create_user_command('SnipLookupEdit', command, {})
     vim.api.nvim_set_keymap('n', config.opts['open_config'], ':SnipLookupEdit<CR>', { noremap = true })
 end
@@ -99,7 +96,7 @@ M._snippets = function(opts, prompt)
     --           Load <category's> snippets from config file            --
     ----------------------------------------------------------------------
     -- TODO: grab this path from the setup function
-    local path_and_categories = config.config_file_abs .. ',' .. prompt
+    local path_and_categories = config.opts['config_file'] .. ',' .. prompt
     local snips = rust.get_snippets(path_and_categories)
     snips = snips.contents
 
@@ -150,7 +147,7 @@ M._categories = function(opts)
     --           Load <category's> snippets from config file            --
     ----------------------------------------------------------------------
     -- TODO: grab this path from the setup function
-    local names = rust.get_categories(config.config_file_abs)
+    local names = rust.get_categories(config.opts['config_file'])
     names = names.contents
 
     ----------------------------------------------------------------------
