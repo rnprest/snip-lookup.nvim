@@ -39,27 +39,26 @@ fn snip_lookup_rust() -> oxi::Result<String> {
     result = format!("sc = {:#?}", &sc);
 
     // ---------------------------------------------
-    let mut category_names = Vec::new();
+    let mut category_names: HashMap<i32, String> = HashMap::new();
+    let mut index = 0;
     for category_name in sc.categories.keys() {
-        category_names.push(category_name);
+        category_names.insert(index, category_name.to_string());
+        index = index + 1;
     }
     print!("category_names = {:#?}", &category_names);
     // ---------------------------------------------
 
     // ---------------------------------------------
     let chosen_category = "phone_numbers";
-    let mut snippet_names = Vec::new();
-    let mut snippet_values = Vec::new();
+    let mut snippets: HashMap<String, String> = HashMap::new();
     if let Some(category) = sc.categories.get(chosen_category) {
         for snippet in &category.snippets {
-            for (snippet_name, snippet_value) in snippet.iter() {
-                snippet_names.push(snippet_name);
-                snippet_values.push(snippet_value);
+            for (name, value) in snippet.iter() {
+                snippets.insert(name.to_string(), value.to_string());
             }
         }
     }
-    print!("snippet_names = {:#?}", &snippet_names);
-    print!("snippet_values = {:#?}", &snippet_values);
+    print!("snippets = {:#?}", &snippets);
     // ---------------------------------------------
 
     Ok(format!("sc = {:#?}", sc))
