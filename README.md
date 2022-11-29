@@ -18,31 +18,34 @@ Enter: snip-lookup.nvim!
 
 Create a `yaml` snippets file somewhere on your OS, then start throwing your snippets inside
 
-Each root-level entry in your file should follow the below structure:
+Your snippets file should follow the below structure:
 
 ```yaml
-<Snippet Category>:
-  icon: <emoji/symbol>
-  snippets:
-    - <snippet name>: <snippet contents>
-    - ...
+categories:
+  - name: <Snippet Category>
+    icon: <emoji/symbol>
+    snippets:
+      - <snippet name>: <snippet contents>
+      - ...
+  - ...
 ```
 
 Example:
 
 ```yaml
-Email Addresses:
-  icon: 📧
-  snippets:
-    - john: john.doe@gmail.com
-    - jane: jane.doe@gmail.com
-    - robert: rob.lastname@yahoo.com
-    - dvorak: d.aoeuhts@long.email.domain.com
-Phone Numbers:
-  icon: ☎️
-  snippets:
-    - john: (111) 111-1111
-    - jane: (222) 222-2222
-    - robert: (333) 333-3333
-    - dvorak: (444) 444-4444
+categories:
+  - name: Email Addresses
+    icon: "📧"
+    snippets:
+      - john: john.doe@gmail.com
+      - jane: jane.doe@gmail.com
+      - robert: rob.lastname@yahoo.com
+      - dvorak: d.aoeuhts@long.email.domain.com
+  - name: Phone Numbers
+    icon: "☎️"
+    snippets:
+      - john: (111) 111-1111
+      - jane: (222) 222-2222
+      - robert: (333) 333-3333
+      - dvorak: (444) 444-4444
 ```

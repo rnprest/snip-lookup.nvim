@@ -5,6 +5,8 @@ local finders = require 'telescope.finders'
 local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
+-- rust
+local rust = require 'snip_lookup_rust'
 
 --------------------------------------
 -- Email Addresses:
@@ -88,6 +90,7 @@ local categories = function(opts)
     }):find()
 end
 
-print(require 'snip_lookup_rust')
+print(rust)
+-- print(rust.something_else())
 
 -- categories(require('telescope.themes').get_dropdown {})
