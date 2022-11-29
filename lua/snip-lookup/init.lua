@@ -8,34 +8,35 @@ local action_state = require 'telescope.actions.state'
 -- rust
 local rust = require 'snip_lookup_rust'
 
---------------------------------------
--- Email Addresses:
---   icon: 📧
---   snippets:
---     - john: john.doe@gmail.com
---     - jane: jane.doe@gmail.com
---     - robert: rob.lastname@yahoo.com
---     - dvorak: d.aoeuhts@long.email.domain.com
--- Phone Numbers:
---   icon: ☎️
---   snippets:
---     - john: (111) 111-1111
---     - jane: (222) 222-2222
---     - robert: (333) 333-3333
---     - dvorak: (444) 444-4444
---------------------------------------
-
 local snippets = function(opts, prompt)
+    local snippets_results = {}
+
+    ----------------------------------------------------------------------
+    --           Load <category's> snippets from config file            --
+    ----------------------------------------------------------------------
+    -- TODO: grab this path from the setup function
+    local path_and_categories = '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml' .. ',' .. prompt
+    local snips = rust.get_snippets(path_and_categories)
+    snips = snips.contents
+
+    ----------------------------------------------------------------------
+    --            Create telescope results table from loaded            --
+    --                             snippets                             --
+    ----------------------------------------------------------------------
+    local index = 1
+    for name, value in pairs(snips) do
+        snippets_results[index] = { name, value }
+        index = index + 1
+    end
+
+    ----------------------------------------------------------------------
+    --                     Create telescope picker                      --
+    ----------------------------------------------------------------------
     opts = opts or {}
     pickers.new(opts, {
         prompt_title = prompt,
         finder = finders.new_table {
-            results = {
-                { 'john', '(111) 111-1111' },
-                { 'jane', '(222) 222-2222' },
-                { 'robert', '(333) 333-3333' },
-                { 'dvorak', '(444) 444-4444' },
-            },
+            results = snippets_results,
             entry_maker = function(entry)
                 return {
                     value = entry,
@@ -66,8 +67,8 @@ local categories = function(opts)
         prompt_title = prompt,
         finder = finders.new_table {
             results = {
-                { 'Email Addresses', '📧' },
-                { 'Phone Numbers', '☎️ ' },
+                { 'email_addresses', '📧' },
+                { 'phone_numbers', '☎️ ' },
             },
             entry_maker = function(entry)
                 return {
@@ -122,4 +123,4 @@ P(snips)
 
 -- print(rust.something_else())
 
--- categories(require('telescope.themes').get_dropdown {})
+categories(require('telescope.themes').get_dropdown {})

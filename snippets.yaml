@@ -5,7 +5,7 @@ categories:
       - john: john.doe@gmail.com
       - jane: jane.doe@gmail.com
       - robert: rob.lastname@yahoo.com
-      - dvorak: d.aoeuhts@long.email.domain.com
+      - dvorak: dvorak@long.email.domain.com
   phone_numbers:
     icon: "☎️"
     snippets:
