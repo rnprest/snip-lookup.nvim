@@ -6,39 +6,51 @@ use oxi::{lua, print, Dictionary, Function, Object};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path};
 
-#[derive(Debug, Serialize, Deserialize)]
+// I can map structs into lua objects perfectly fine, but hashmaps? Absolutely not.
+// Thus, this wrapper struct (and the below one) was born
 
-struct NeovimCategories {
-    pub names: HashMap<String, String>,
+#[derive(Debug, Serialize, Deserialize)]
+struct NeovimWrapper {
+    pub contents: HashMap<String, String>,
 }
 
-impl FromObject for NeovimCategories {
+//------------------------------------------------------------------//
+//           I'm yoinking these impl's straight from the            //
+//                          example here:                           //
+//        https://github.com/noib3/nvim-oxi/blob/master/exam        //
+//                         ples/mechanic.rs                         //
+//------------------------------------------------------------------//
+
+impl FromObject for NeovimWrapper {
     fn from_object(obj: Object) -> Result<Self, conversion::Error> {
         Self::deserialize(Deserializer::new(obj)).map_err(Into::into)
     }
 }
 
-impl ToObject for NeovimCategories {
+impl ToObject for NeovimWrapper {
     fn to_object(self) -> Result<Object, conversion::Error> {
         self.serialize(Serializer::new()).map_err(Into::into)
     }
 }
 
-impl lua::Poppable for NeovimCategories {
+impl lua::Poppable for NeovimWrapper {
     unsafe fn pop(lstate: *mut lua::ffi::lua_State) -> Result<Self, lua::Error> {
         let obj = Object::pop(lstate)?;
         Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
     }
 }
 
-impl lua::Pushable for NeovimCategories {
+impl lua::Pushable for NeovimWrapper {
     unsafe fn push(self, lstate: *mut lua::ffi::lua_State) -> Result<std::ffi::c_int, lua::Error> {
         self.to_object()
             .map_err(lua::Error::push_error_from_err::<Self, _>)?
             .push(lstate)
     }
 }
-// ----------
+
+//------------------------------------------------------------------//
+//              Used for deserializing our yaml config              //
+//------------------------------------------------------------------//
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Category {
@@ -60,122 +72,62 @@ impl SnippetConfig {
     }
 }
 
-// fn get_categories(path: String) -> oxi::Result<HashMap<i32, String>> {
-//     let sc = SnippetConfig::load(path).unwrap();
-
-//     let mut category_names: HashMap<i32, String> = HashMap::new();
-//     let mut index = 0;
-//     for category_name in sc.categories.keys() {
-//         category_names.insert(index, category_name.to_string());
-//         index = index + 1;
-//     }
-//     print!("category_names = {:#?}", &category_names);
-//     Ok(category_names)
-// }
-
-// fn get_snippets(path: String, category: String) -> oxi::Result<HashMap<String, String>> {
-//     let sc = SnippetConfig::load(path).unwrap();
-
-//     let mut snippets: HashMap<String, String> = HashMap::new();
-//     if let Some(category) = sc.categories.get(&category) {
-//         for snippet in &category.snippets {
-//             for (name, value) in snippet.iter() {
-//                 snippets.insert(name.to_string(), value.to_string());
-//             }
-//         }
-//     }
-//     let object: nvim_oxi::Dictionary = snippets;
-//     Ok(snippets)
-// }
-
 #[oxi::module]
 fn snip_lookup_rust() -> oxi::Result<Dictionary> {
-    // fn something() -> String {
-    //     "something".to_string()
-    // }
-    // fn something_else() -> String {
-    //     "something".to_string()
-    // }
-    // let mut result = something();
-
-    // let sc_path = "/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml";
-    // let sc = SnippetConfig::load(sc_path).unwrap();
-    // result = format!("sc = {:#?}", &sc);
-
-    // // ---------------------------------------------
-    // let mut category_names: HashMap<i32, String> = HashMap::new();
-    // let mut index = 0;
-    // for category_name in sc.categories.keys() {
-    //     category_names.insert(index, category_name.to_string());
-    //     index = index + 1;
-    // }
-    // print!("category_names = {:#?}", &category_names);
-    // // ---------------------------------------------
-
-    // ---------------------------------------------
-    // let chosen_category = "phone_numbers";
-    // let mut snippets: HashMap<String, String> = HashMap::new();
-    // if let Some(category) = sc.categories.get(chosen_category) {
-    //     for snippet in &category.snippets {
-    //         for (name, value) in snippet.iter() {
-    //             snippets.insert(name.to_string(), value.to_string());
-    //         }
-    //     }
-    // }
-    // print!("snippets = {:#?}", &snippets);
-    // ---------------------------------------------
-
-    // fn get_categories(path: String) -> oxi::Result<HashMap<i32, String>> {
-    //     let sc = SnippetConfig::load(path).unwrap();
-
-    //     let mut category_names: HashMap<i32, String> = HashMap::new();
-    //     let mut index = 0;
-    //     for category_name in sc.categories.keys() {
-    //         category_names.insert(index, category_name.to_string());
-    //         index = index + 1;
-    //     }
-    //     print!("category_names = {:#?}", &category_names);
-    //     Ok(category_names)
-    // }
-
-    // let sc_path = "/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml";
-    // let sc = SnippetConfig::load(sc_path).unwrap();
-
     let get_categories = Function::from_fn::<_, oxi::Error>(move |path: String| {
-        // let mut snippets: HashMap<String, String> = HashMap::new();
-        // snippets.insert("testing".to_string(), "aoeuaoeu".to_string());
-
-        // let aoeu = NeovimCategories { names: snippets };
-        // let lol = nvim_oxi::Object::from(snippets)
-
-        // Ok(aoeu)
-
-        let _sc_path = "/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml";
-        let sc = SnippetConfig::load(path).unwrap();
-
         let mut category_names: HashMap<String, String> = HashMap::new();
-        let mut index = 0;
-        for category_name in sc.categories.keys() {
+
+        let sc = SnippetConfig::load(path).unwrap();
+        for (category_name, category_contents) in sc.categories.into_iter() {
             print!(
                 "inserting {},{} into the category_names!",
-                index.to_string(),
-                category_name.to_string()
+                category_name.to_string(),
+                category_contents.icon.to_string()
             );
-            category_names.insert(index.to_string(), category_name.to_string());
-            index = index + 1;
+            category_names.insert(
+                category_name.to_string(),
+                category_contents.icon.to_string(),
+            );
         }
 
-        let nvim_categories = NeovimCategories {
-            names: category_names,
+        let nvim_categories = NeovimWrapper {
+            contents: category_names,
         };
         Ok(nvim_categories)
-        //     print!("category_names = {:#?}", &category_names);
-        //     Ok(category_names)
+    });
+
+    // let get_snippets = Function::from_fn::<_, oxi::Error>(move |(path, category)| {
+    // let get_snippets = Function::from_fn::<_, oxi::Error>(move |path: String, category: String| {
+    // TODO: figure out a way to pass 2 closures to this function..
+    let get_snippets = Function::from_fn::<_, oxi::Error>(move |path_and_category: String| {
+        //------------------------------------------------------------------//
+        //         Maybe I can just pass 1 string but separate them         //
+        //                         with a comma????                         //
+        //------------------------------------------------------------------//
+        let args: Vec<&str> = path_and_category.split(",").collect();
+        let path = args[0].to_string();
+        let category = args[1].to_string();
+        print!("path = {}", path);
+        print!("category = {}", category);
+
+        let mut snippets: HashMap<String, String> = HashMap::new();
+
+        let sc = SnippetConfig::load(path).unwrap();
+        if let Some(category) = sc.categories.get(&category) {
+            for snippet in &category.snippets {
+                for (name, value) in snippet.iter() {
+                    snippets.insert(name.to_string(), value.to_string());
+                }
+            }
+        }
+
+        let nvim_snippets = NeovimWrapper { contents: snippets };
+        Ok(nvim_snippets)
     });
 
     Ok(Dictionary::from_iter([
         ("get_categories", get_categories),
-        // ("get_snippets", Function::from(get_snippets)),
+        ("get_snippets", get_snippets),
     ]))
     // Ok(42)
 }

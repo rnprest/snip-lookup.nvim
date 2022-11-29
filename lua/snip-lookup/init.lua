@@ -90,14 +90,35 @@ local categories = function(opts)
     }):find()
 end
 
+----------------------------------------------------------------------
+--                    Get those categories baby                     --
+----------------------------------------------------------------------
+-- -- P(rust.get_categories())
+-- -- P(rust.get_categories())
+-- local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
+-- names = names.names -- TODO: there's so much wrong with this line
+-- P(names)
+-- for _, k in pairs(names) do
+--     vim.notify(k)
+-- end
+
+----------------------------------------------------------------------
+--                     Get those SNIPPETS HOMIE                     --
+----------------------------------------------------------------------
 -- P(rust.get_categories())
 -- P(rust.get_categories())
 local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
-names = names.names -- TODO: there's so much wrong with this line
+names = names.contents -- TODO: there's so much wrong with this line
 P(names)
-for _, k in pairs(names) do
-    vim.notify(k)
+for category, icon in pairs(names) do
+    vim.notify(category .. '   ' .. icon)
 end
+
+local path_and_categories = '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
+    .. ','
+    .. 'email_addresses'
+local snips = rust.get_snippets(path_and_categories)
+P(snips)
 
 -- print(rust.something_else())
 
