@@ -90,7 +90,7 @@ local categories = function(opts)
     }):find()
 end
 
-print(rust)
+P(rust.get_categories())
 -- print(rust.something_else())
 
 -- categories(require('telescope.themes').get_dropdown {})
