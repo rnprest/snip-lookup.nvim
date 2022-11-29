@@ -88,4 +88,6 @@ local categories = function(opts)
     }):find()
 end
 
-categories(require('telescope.themes').get_dropdown {})
+print(require 'snip_lookup_rust')
+
+-- categories(require('telescope.themes').get_dropdown {})

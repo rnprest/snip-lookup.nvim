@@ -9,6 +9,7 @@
 <h2 align="center">
   <img alt="PR" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"/>
   <img alt="Lua" src="https://img.shields.io/badge/lua-%232C2D72.svg?&style=flat&logo=lua&logoColor=white"/>
+  <img alt="Rust" src="https://img.shields.io/badge/-Rust-orange"/>
 </h2>
 
 Do you have common snippets that you are constantly needing to reference or use?
