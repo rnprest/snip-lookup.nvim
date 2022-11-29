@@ -8,30 +8,30 @@ use std::{collections::HashMap, path::Path};
 
 #[derive(Debug, Serialize, Deserialize)]
 
-struct Cat {
+struct NeovimCategories {
     pub names: HashMap<String, String>,
 }
 
-impl FromObject for Cat {
+impl FromObject for NeovimCategories {
     fn from_object(obj: Object) -> Result<Self, conversion::Error> {
         Self::deserialize(Deserializer::new(obj)).map_err(Into::into)
     }
 }
 
-impl ToObject for Cat {
+impl ToObject for NeovimCategories {
     fn to_object(self) -> Result<Object, conversion::Error> {
         self.serialize(Serializer::new()).map_err(Into::into)
     }
 }
 
-impl lua::Poppable for Cat {
+impl lua::Poppable for NeovimCategories {
     unsafe fn pop(lstate: *mut lua::ffi::lua_State) -> Result<Self, lua::Error> {
         let obj = Object::pop(lstate)?;
         Self::from_object(obj).map_err(lua::Error::pop_error_from_err::<Self, _>)
     }
 }
 
-impl lua::Pushable for Cat {
+impl lua::Pushable for NeovimCategories {
     unsafe fn push(self, lstate: *mut lua::ffi::lua_State) -> Result<std::ffi::c_int, lua::Error> {
         self.to_object()
             .map_err(lua::Error::push_error_from_err::<Self, _>)?
@@ -141,16 +141,36 @@ fn snip_lookup_rust() -> oxi::Result<Dictionary> {
     // let sc_path = "/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml";
     // let sc = SnippetConfig::load(sc_path).unwrap();
 
-    let get_categories = Function::from_fn::<_, oxi::Error>(move |()| {
-        print!("hello from get_categories");
+    let get_categories = Function::from_fn::<_, oxi::Error>(move |path: String| {
+        // let mut snippets: HashMap<String, String> = HashMap::new();
+        // snippets.insert("testing".to_string(), "aoeuaoeu".to_string());
 
-        let mut snippets: HashMap<String, String> = HashMap::new();
-        snippets.insert("testing".to_string(), "aoeuaoeu".to_string());
-
-        let aoeu = Cat { names: snippets };
+        // let aoeu = NeovimCategories { names: snippets };
         // let lol = nvim_oxi::Object::from(snippets)
 
-        Ok(aoeu)
+        // Ok(aoeu)
+
+        let _sc_path = "/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml";
+        let sc = SnippetConfig::load(path).unwrap();
+
+        let mut category_names: HashMap<String, String> = HashMap::new();
+        let mut index = 0;
+        for category_name in sc.categories.keys() {
+            print!(
+                "inserting {},{} into the category_names!",
+                index.to_string(),
+                category_name.to_string()
+            );
+            category_names.insert(index.to_string(), category_name.to_string());
+            index = index + 1;
+        }
+
+        let nvim_categories = NeovimCategories {
+            names: category_names,
+        };
+        Ok(nvim_categories)
+        //     print!("category_names = {:#?}", &category_names);
+        //     Ok(category_names)
     });
 
     Ok(Dictionary::from_iter([

@@ -90,7 +90,15 @@ local categories = function(opts)
     }):find()
 end
 
-P(rust.get_categories())
+-- P(rust.get_categories())
+-- P(rust.get_categories())
+local names = rust.get_categories '/Users/rpreston/personal/plugins/snip-lookup.nvim/snippets.yaml'
+names = names.names -- TODO: there's so much wrong with this line
+P(names)
+for _, k in pairs(names) do
+    vim.notify(k)
+end
+
 -- print(rust.something_else())
 
 -- categories(require('telescope.themes').get_dropdown {})
