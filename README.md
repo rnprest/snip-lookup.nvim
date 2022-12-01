@@ -2,9 +2,8 @@
   <br>
   snip-lookup.nvim
   <br>
-  <!-- <br> -->
-  <!-- put gif here -->
-  <!-- <br> -->
+  <img width="800" alt="Video Demo" src="https://user-images.githubusercontent.com/47462344/204534974-7090ad9a-51ba-4743-a27e-751fd06f8a99.mov">
+  <br>
 </h1>
 <h2 align="center">
   <img alt="PR" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"/>
