@@ -2,8 +2,9 @@
   <br>
   snip-lookup.nvim
   <br>
-  <img width="800" alt="Video Demo" src="https://user-images.githubusercontent.com/47462344/204534974-7090ad9a-51ba-4743-a27e-751fd06f8a99.mov">
   <br>
+  
+  ![aoeu](https://user-images.githubusercontent.com/47462344/204839108-6dc32a57-1c4b-4921-911e-5220de4a7de8.gif)
 </h1>
 <h2 align="center">
   <img alt="PR" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"/>
