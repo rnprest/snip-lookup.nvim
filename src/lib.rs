@@ -82,7 +82,12 @@ fn snip_lookup() -> oxi::Result<Dictionary> {
         let mut category_names: HashMap<String, String> = HashMap::new();
 
         let sc = SnippetConfig::load(path).unwrap();
+        let mut longest_icon = 0; // Used for padding each icon to the same width
         for (category_name, category_contents) in sc.categories.into_iter() {
+            if category_contents.icon.len() > longest_icon {
+                longest_icon = category_contents.icon.len();
+            }
+            oxi::print!("longest_icon width = {}", &longest_icon);
             category_names.insert(
                 category_name.to_string(),
                 category_contents.icon.to_string(),
