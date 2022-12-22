@@ -94,6 +94,10 @@ fn snip_lookup() -> oxi::Result<Dictionary> {
             );
         }
 
+        for icon in category_names.values_mut() {
+            *icon = format!("{:>width$}", *icon, width = longest_icon);
+        }
+
         let nvim_categories = NeovimWrapper {
             contents: category_names,
         };
