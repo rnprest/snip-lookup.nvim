@@ -82,11 +82,21 @@ fn snip_lookup() -> oxi::Result<Dictionary> {
         let mut category_names: HashMap<String, String> = HashMap::new();
 
         let sc = SnippetConfig::load(path).unwrap();
+        let mut longest_icon_length = 0; // Used for padding each icon to the same width
         for (category_name, category_contents) in sc.categories.into_iter() {
+            let icon_length = category_contents.icon.chars().count();
+            if icon_length > longest_icon_length {
+                longest_icon_length = icon_length;
+            }
             category_names.insert(
                 category_name.to_string(),
                 category_contents.icon.to_string(),
             );
+        }
+
+        // Pad each icon so that category names all begin at same column
+        for icon in category_names.values_mut() {
+            *icon = format!("{:width$}", *icon, width = longest_icon_length);
         }
 
         let nvim_categories = NeovimWrapper {
