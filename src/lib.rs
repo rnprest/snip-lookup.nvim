@@ -77,7 +77,7 @@ impl SnippetConfig {
 }
 
 #[oxi::module]
-fn snip_lookup_rust() -> oxi::Result<Dictionary> {
+fn snip_lookup() -> oxi::Result<Dictionary> {
     let get_categories = Function::from_fn::<_, oxi::Error>(move |path: String| {
         let mut category_names: HashMap<String, String> = HashMap::new();
 

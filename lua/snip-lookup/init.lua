@@ -8,7 +8,7 @@ local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 -- Rust
-local rust = require 'snip_lookup_rust'
+local rust = require 'snip_lookup'
 -- snip-lookup stuff
 local config = require 'snip-lookup.config'
 

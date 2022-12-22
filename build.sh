@@ -2,5 +2,5 @@
 
 cargo build --release
 
-cp target/release/libsnip_lookup_rust.dylib lua/snip_lookup_rust.so
-cp lua/snip_lookup_rust.so lua/snip_lookup_rust.dll
+cp target/release/libsnip_lookup.dylib lua/snip_lookup.so
+cp lua/snip_lookup.so lua/snip_lookup.dll
