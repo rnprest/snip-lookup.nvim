@@ -8,7 +8,7 @@ local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 -- Rust
-local rust = require 'snip_lookup_rust'
+local rust = require 'snip_lookup'
 -- snip-lookup stuff
 local config = require 'snip-lookup.config'
 
@@ -46,6 +46,8 @@ M.setup = function(opts)
     -- TODO: need to error if user tries to pass an option that doesn't exist
     if opts ~= nil then
         config.opts = vim.tbl_deep_extend('keep', opts, config.default_opts)
+    else
+        config.opts = config.default_opts
     end
 
     vim.api.nvim_set_keymap(

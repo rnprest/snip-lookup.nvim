@@ -242,7 +242,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "snip_lookup_rust"
+name = "snip_lookup"
 version = "0.1.0"
 dependencies = [
  "nvim-oxi",
