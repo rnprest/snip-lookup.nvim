@@ -107,12 +107,12 @@ Example (This will be the default contents of your snippet file):
 ```yaml
 categories:
   Email Addresses:
-    icon: "📧"
+    icon: 📧
     snippets:
       - John Doe: john.doe@gmail.com
       - Jane Doe: jane.doe@gmail.com
   Phone Numbers:
-    icon: "📞"
+    icon: 📞
     snippets:
       - Jack Black: (111) 111-1111
       - Jill Dill: (222) 222-2222

@@ -14,53 +14,6 @@ local config = require 'snip-lookup.config'
 
 local M = {}
 
-M.create_config_file = function(path)
-    local contents = [[
-# YAML Symbol crash-course:
-# '|' will respect newlines - which makes it perfect for file templates!
-# Likewise, '>' will NOT respect newlines - I use this for organizing a long string
-# The hyphen ('-') will avoid having a trailing linebreak
-categories:
-  Email Addresses:
-    icon: "📧"
-    snippets:
-      - John Doe: john.doe@gmail.com
-      - Jane Doe: jane.doe@gmail.com
-  Phone Numbers:
-    icon: "📞"
-    snippets:
-      - Jack Black: (111) 111-1111
-      - Jill Dill: (222) 222-2222
-  File Templates:
-    snippets:
-      - README: |-
-          # Title
-
-          ## Installation
-
-          ## Usage
-  Email Groups:
-    snippets:
-      - Family: >-
-          mom@gmail.com;
-          dad@hotmail.com;
-          brother@aol.com;
-          sister@yahoo.com;
-          son@proton.me;
-          daughter@outlook.com
-        ]]
-
-    -- Create config directory if it doesn't exist already
-    local cleaned_path = vim.fn.fnamemodify(path, ':p')
-    local cleaned_path_parent_dir = vim.fn.fnamemodify(path, ':p:h')
-    vim.fn.mkdir(cleaned_path_parent_dir, 'p')
-    -- Create initial config file, that can be tweaked by user
-    uv.fs_open(cleaned_path, 'w', 438, function(err, fd)
-        uv.fs_write(fd, contents, 0)
-        uv.fs_close(fd)
-    end)
-end
-
 --- Loads the user's specified configuration and creates their desired keymapping
 ---@param opts table User-provided options, to override the default options with
 M.setup = function(opts)
@@ -94,10 +47,14 @@ M.setup = function(opts)
     vim.api.nvim_set_keymap('n', config.opts['open_config'], ':SnipLookupEdit<CR>', { noremap = true })
 end
 
+--- Opens the snippet telescope picker
 M.search = function()
     M._categories(require('telescope.themes').get_dropdown {})
 end
 
+--- Creates the snippets-specific telescope picker for a given category
+---@param opts table User-provided options, to override the default options with
+---@param prompt string The title of the telescope picker
 M._snippets = function(opts, prompt)
     local snippets_results = {}
 
@@ -149,6 +106,8 @@ M._snippets = function(opts, prompt)
     }):find()
 end
 
+--- Creates the telescope picker of the user's snippet categories
+---@param opts table User-provided options, to override the default options with
 M._categories = function(opts)
     local category_results = {}
 
@@ -180,6 +139,8 @@ M._categories = function(opts)
             results = category_results,
             entry_maker = function(entry)
                 return {
+                    -- entry[2] = category icon
+                    -- entry[1] = category name
                     value = entry,
                     display = entry[2] .. ' ' .. entry[1],
                     ordinal = entry[1],
@@ -197,6 +158,57 @@ M._categories = function(opts)
             return true
         end,
     }):find()
+end
+
+--- Creates the initial configuration file at a specified path.
+--- This function should take care of creating any directories
+--- that don't exist, as well as the initial file creation itself.
+---@param path string The filesystem path of where the user's snippet config file should be created
+M.create_config_file = function(path)
+    local contents = [[
+# YAML Symbol crash-course:
+# '|' will respect newlines - which makes it perfect for file templates!
+# Likewise, '>' will NOT respect newlines - I use this for organizing a long string
+# The hyphen ('-') will avoid having a trailing linebreak
+categories:
+  Email Addresses:
+    icon: 📧
+    snippets:
+      - John Doe: john.doe@gmail.com
+      - Jane Doe: jane.doe@gmail.com
+  Phone Numbers:
+    icon: 📞
+    snippets:
+      - Jack Black: (111) 111-1111
+      - Jill Dill: (222) 222-2222
+  File Templates:
+    snippets:
+      - README: |-
+          # Title
+
+          ## Installation
+
+          ## Usage
+  Email Groups:
+    snippets:
+      - Family: >-
+          mom@gmail.com;
+          dad@hotmail.com;
+          brother@aol.com;
+          sister@yahoo.com;
+          son@proton.me;
+          daughter@outlook.com
+        ]]
+
+    -- Create config directory if it doesn't exist already
+    local cleaned_path = vim.fn.fnamemodify(path, ':p')
+    local cleaned_path_parent_dir = vim.fn.fnamemodify(path, ':p:h')
+    vim.fn.mkdir(cleaned_path_parent_dir, 'p')
+    -- Create initial config file, that can be tweaked by user
+    uv.fs_open(cleaned_path, 'w', 438, function(err, fd)
+        uv.fs_write(fd, contents, 0)
+        uv.fs_close(fd)
+    end)
 end
 
 return M
