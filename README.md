@@ -49,7 +49,7 @@ That being said, I also have have several "wants" that I (until now) _haven't_ b
 ## Requirements
 
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-- Cargo (For building from source)
+- **[Optional]** cargo and rust toolchain
 
 ## Installation and Setup
 
@@ -60,6 +60,24 @@ use {
     'rnprest/snip-lookup.nvim',
         requires = { 'nvim-telescope/telescope.nvim' },
         run = './install.sh',
+        config = function()
+            require('snip-lookup').setup {
+                -- Default options are listed below - you can just call setup() if these are fine with you
+                open_picker = '<leader>sl',
+                open_config = '<leader>esl',
+                config_file = vim.fn.stdpath 'data' .. '/snip-lookup/snippets.yaml',
+            }
+    end,
+}
+```
+
+Build from source (requires cargo) - just tweak the 'run' arg
+
+```lua
+use {
+    'rnprest/snip-lookup.nvim',
+        requires = { 'nvim-telescope/telescope.nvim' },
+        run = './install.sh build',
         config = function()
             require('snip-lookup').setup {
                 -- Default options are listed below - you can just call setup() if these are fine with you
