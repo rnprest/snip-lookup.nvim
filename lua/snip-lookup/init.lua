@@ -16,6 +16,10 @@ local M = {}
 
 M.create_config_file = function(path)
     local contents = [[
+# YAML Symbol crash-course:
+# '|' will respect newlines - which makes it perfect for file templates!
+# Likewise, '>' will NOT respect newlines - I use this for organizing a long string
+# The hyphen ('-') will avoid having a trailing linebreak
 categories:
   Email Addresses:
     icon: "📧"
@@ -23,10 +27,27 @@ categories:
       - John Doe: john.doe@gmail.com
       - Jane Doe: jane.doe@gmail.com
   Phone Numbers:
-    icon: "☎️"
+    icon: "📞"
     snippets:
       - Jack Black: (111) 111-1111
       - Jill Dill: (222) 222-2222
+  File Templates:
+    snippets:
+      - README: |-
+          # Title
+
+          ## Installation
+
+          ## Usage
+  Email Groups:
+    snippets:
+      - Family: >-
+          mom@gmail.com;
+          dad@hotmail.com;
+          brother@aol.com;
+          sister@yahoo.com;
+          son@proton.me;
+          daughter@outlook.com
         ]]
 
     -- Create config directory if it doesn't exist already
