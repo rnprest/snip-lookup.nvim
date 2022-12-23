@@ -58,7 +58,7 @@ impl lua::Pushable for NeovimWrapper {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Category {
-    pub icon: String, // TODO: make this an option or default it
+    pub icon: Option<String>,
     pub snippets: Vec<HashMap<String, String>>,
 }
 
@@ -84,19 +84,31 @@ fn snip_lookup() -> oxi::Result<Dictionary> {
         let sc = SnippetConfig::load(path).unwrap();
         let mut longest_icon_length = 0; // Used for padding each icon to the same width
         for (category_name, category_contents) in sc.categories.into_iter() {
-            let icon_length = category_contents.icon.chars().count();
+            let icon_length: usize;
+
+            // If an icon isn't defined for a category, use an empty string instead
+            let icon = if category_contents.icon.is_some() {
+                category_contents.icon.unwrap().to_string()
+            } else {
+                "".to_string()
+            };
+
+            icon_length = icon.chars().count();
+
             if icon_length > longest_icon_length {
                 longest_icon_length = icon_length;
             }
-            category_names.insert(
-                category_name.to_string(),
-                category_contents.icon.to_string(),
-            );
+
+            category_names.insert(category_name.to_string(), icon);
         }
 
         // Pad each icon so that category names all begin at same column
         for icon in category_names.values_mut() {
-            *icon = format!("{:width$}", *icon, width = longest_icon_length);
+            if icon.chars().all(|char| char == ' ') {
+                *icon = format!("{:width$}", *icon, width = longest_icon_length + 1);
+            } else {
+                *icon = format!("{:width$}", *icon, width = longest_icon_length);
+            }
         }
 
         let nvim_categories = NeovimWrapper {
