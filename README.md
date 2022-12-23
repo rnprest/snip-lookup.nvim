@@ -59,7 +59,7 @@ Using [packer](https://github.com/wbthomason/packer.nvim):
 use {
     'rnprest/snip-lookup.nvim',
         requires = { 'nvim-telescope/telescope.nvim' },
-        run = './build.sh',
+        run = './install.sh',
         config = function()
             require('snip-lookup').setup {
                 -- Default options are listed below - you can just call setup() if these are fine with you
