@@ -44,6 +44,7 @@ jobs:
   release:
     name: release
     outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
       upload_url: ${{ steps.release.outputs.upload_url }}
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
@@ -67,8 +68,6 @@ jobs:
           git push origin :stable || true
           git tag -a stable -m "Last Stable Release"
           git push origin stable
-      - name: print upload_url
-        run: echo ${{ steps.release.outputs }}
 
   #--------------------------------------------------------------------#
   #                   Attach rust assets to release                    #
@@ -77,6 +76,7 @@ jobs:
     name: Attach MacOS Asset
     runs-on: macos-latest
     needs: release
+    if: needs.release.outputs.releases_created
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -89,8 +89,6 @@ jobs:
           override: true
       - name: build
         run: cargo build --all --release && mv target/release/libsnip_lookup.dylib lua/snip_lookup.so
-      - name: print upload_url
-        run: echo ${{ needs.release.outputs.upload_url }}
       - uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
