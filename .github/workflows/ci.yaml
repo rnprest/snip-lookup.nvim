@@ -89,8 +89,10 @@ jobs:
           override: true
       - name: build
         run: cargo build --all --release && mv target/release/libsnip_lookup.dylib lua/snip_lookup.so
-      - uses: shogo82148/actions-upload-release-asset@v1
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Get the upload url from release-please outputs
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: lua/snip-lookup-mac-x86_64.tar.gz
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          asset_path: ./lua/snip-lookup-mac-x86_64.tar.gz
