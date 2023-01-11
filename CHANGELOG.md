@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/rnprest/snip-lookup.nvim/compare/v0.2.0...v0.2.1) (2023-01-11)
+
+
+### Bug Fixes
+
+* try different release action ([9a0842b](https://github.com/rnprest/snip-lookup.nvim/commit/9a0842b934ea18b8f1f29308e0dd4f4b911fecf9))
+
 ## [0.2.0](https://github.com/rnprest/snip-lookup.nvim/compare/v0.1.1...v0.2.0) (2023-01-11)
 
 
