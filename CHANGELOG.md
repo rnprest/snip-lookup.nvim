@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/rnprest/snip-lookup.nvim/compare/v0.2.2...v0.3.0) (2023-01-11)
+
+
+### Features
+
+* **ci:** add 2 more OS artifacts ([c47b748](https://github.com/rnprest/snip-lookup.nvim/commit/c47b7486875773f2c9f3be35c47462be71ae6608))
+
 ## [0.2.2](https://github.com/rnprest/snip-lookup.nvim/compare/v0.2.1...v0.2.2) (2023-01-11)
 
 
