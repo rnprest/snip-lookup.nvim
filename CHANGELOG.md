@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/rnprest/snip-lookup.nvim/compare/v0.2.1...v0.2.2) (2023-01-11)
+
+
+### Bug Fixes
+
+* **ci:** zip release asset before uploading ([952214f](https://github.com/rnprest/snip-lookup.nvim/commit/952214ff055e273f57db5ba5777fcf594a730625))
+
 ## [0.2.1](https://github.com/rnprest/snip-lookup.nvim/compare/v0.2.0...v0.2.1) (2023-01-11)
 
 
