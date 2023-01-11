@@ -106,7 +106,7 @@ Editing your snippets
    - To save your changes, just save the file.
    - Any changes made will be immediately available the next time you hit your search remap
 
-# Documentation
+## Documentation
 
 Snippet file structure:
 
@@ -120,7 +120,7 @@ categories:
   ...
 ```
 
-Example (This will be the default contents of your snippet file):
+Example (This will be the default content of your snippet file):
 
 ```yaml
 categories:
@@ -152,3 +152,11 @@ categories:
           son@proton.me;
           daughter@outlook.com
 ```
+
+## Known Issues
+
+If you find that your icons and category names don't share the same consistent width when searching through categories, it could be because of the emoji you're trying to use.
+
+I'm not sure how to fix this other than by replacing the problematic emoji (demonstrated below), but if someone thinks they could find a proper solution then that would be greatly appreciated!
+
+https://user-images.githubusercontent.com/47462344/211921679-a8b89a7f-966c-4ce0-ac36-b6e5adb5042a.mp4
