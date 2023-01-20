@@ -53,12 +53,37 @@ That being said, I also have have several "wants" that I (until now) _haven't_ b
 
 ## Installation and Setup
 
+### Install Latest Release
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+    'rnprest/snip-lookup.nvim',
+    dependencies = 'nvim-telescope/telescope.nvim',
+    build = './install.sh',
+    config = function()
+        require('snip-lookup').setup {
+            -- Default options are listed below - you can just call setup() if these are fine with you
+            open_picker = '<leader>sl',
+            open_config = '<leader>esl',
+            config_file = vim.fn.stdpath 'data' .. '/snip-lookup/snippets.yaml',
+        }
+    end,
+    -- Lazy-load when your chosen key mappings are hit
+    keys = {
+        '<leader>sl',
+        '<leader>esl',
+    },
+}
+```
+
 Using [packer](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
     'rnprest/snip-lookup.nvim',
-        requires = { 'nvim-telescope/telescope.nvim' },
+        requires = 'nvim-telescope/telescope.nvim',
         run = './install.sh',
         config = function()
             require('snip-lookup').setup {
@@ -71,12 +96,43 @@ use {
 }
 ```
 
-Build from source (requires cargo) - just tweak the 'run' arg
+### Build From Source
+
+> **NOTE:** requires
+> [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) to
+> be installed. The only difference between this use block and the one used for
+> installing the latest release, is the addition of the `build` argument for
+> our install script.
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+    'rnprest/snip-lookup.nvim',
+    dependencies = 'nvim-telescope/telescope.nvim',
+    build = './install.sh build',
+    config = function()
+        require('snip-lookup').setup {
+            -- Default options are listed below - you can just call setup() if these are fine with you
+            open_picker = '<leader>sl',
+            open_config = '<leader>esl',
+            config_file = vim.fn.stdpath 'data' .. '/snip-lookup/snippets.yaml',
+        }
+    end,
+    -- Lazy-load when your chosen key mappings are hit
+    keys = {
+        '<leader>sl',
+        '<leader>esl',
+    },
+}
+```
+
+Using [packer](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
     'rnprest/snip-lookup.nvim',
-        requires = { 'nvim-telescope/telescope.nvim' },
+        requires = 'nvim-telescope/telescope.nvim',
         run = './install.sh build',
         config = function()
             require('snip-lookup').setup {
