@@ -1,4 +1,4 @@
-*snip-lookup.nvim.txt*     For Neovim >= 0.8.0    Last change: 2023 January 20
+*snip-lookup.nvim.txt*     For Neovim >= 0.8.0    Last change: 2023 January 23
 
 ==============================================================================
 Table of Contents                         *snip-lookup.nvim-table-of-contents*
